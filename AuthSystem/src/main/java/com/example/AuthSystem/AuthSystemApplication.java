@@ -14,3 +14,48 @@ public class AuthSystemApplication {
 	}
 
 }
+
+//com.devesh.authsystem
+//│
+//├── AuthSystemApplication.java
+//│
+//├── config
+//│   ├── security
+//│   ├── jwt
+//│   ├── redis
+//│   ├── mail
+//│   └── cors
+//│
+//├── controller
+//│   ├── auth
+//│   ├── user
+//│   ├── admin
+//│   └── health
+//│
+//├── service
+//│   ├── auth
+//│   ├── user
+//│   ├── token
+//│   ├── email
+//│   └── role
+//│
+//├── repository
+//│
+//├── entity
+//│
+//├── dto
+//│   ├── request
+//│   └── response
+//│
+//├── security
+//│   ├── filter
+//│   ├── handler
+//│   └── provider
+//│
+//├── exception
+//│
+//├── util
+//│
+//└── constant
+
+
