@@ -6,8 +6,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class AuthSystemApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args)
+    {
 		SpringApplication.run(AuthSystemApplication.class, args);
+
+        System.out.println("Devesh Tenuriya");
 	}
 
 }
