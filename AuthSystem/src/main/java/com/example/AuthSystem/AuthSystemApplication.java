@@ -11,7 +11,6 @@ public class AuthSystemApplication {
 		SpringApplication.run(AuthSystemApplication.class, args);
 
         System.out.println("Devesh Tenuriya");
-
 	}
 
 }
