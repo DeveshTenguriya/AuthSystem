@@ -32,4 +32,9 @@ public class JwtServices {
     }
 
 
+    public boolean validateToken(String token, UserDetails userDetails){
+        String username= extractUsername(token);
+
+        return username.equals(userDetails.getUsername());
+    }
 }
