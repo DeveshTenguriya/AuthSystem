@@ -11,6 +11,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,20 +43,24 @@ public class AuthenticationService {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getPassword(),
-                        request.getEmail())
+                        request.getEmail(),
+                        request.getPassword())
+
         );
 
         User user=userRepository
                 .findByEmail(request.getEmail())
-                .orElseThrow();
+                .orElseThrow(()-> new RuntimeException("User not found"));
 
         String accessToken=
                 jwtServices.generateToken(
                         new org.springframework.security.core.userdetails.User(
                                 user.getEmail(),
                                 user.getPassword(),
-                                List.of()
+                                List.of(new SimpleGrantedAuthority(user.getRoles()
+                                        .stream()
+                                        .map(role -> new SimpleGrantedAuthority(role.getName()))
+                                        .toList().toString()))
                         )
                 );
 
@@ -72,4 +77,20 @@ public class AuthenticationService {
 
         return new AuthResponse(accessToken, refreshToken);
     }
+
+    //Full Flow Summary
+    //
+    //User sends email + password
+    //
+    //Spring Security validates credentials
+    //
+    //You fetch user entity
+    //
+    //Generate access token (15 min)
+    //
+    //Generate refresh token (7 days)
+    //
+    //Store refresh token in DB
+    //
+    //Return both tokens
 }
