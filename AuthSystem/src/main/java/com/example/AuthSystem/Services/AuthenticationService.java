@@ -3,6 +3,7 @@ package com.example.AuthSystem.Services;
 import com.example.AuthSystem.Config.JwtServices;
 import com.example.AuthSystem.DTO.AuthResponse;
 import com.example.AuthSystem.DTO.LoginRequest;
+import com.example.AuthSystem.DTO.RegisterRequest;
 import com.example.AuthSystem.Entity.RefreshToken;
 import com.example.AuthSystem.Entity.User;
 import com.example.AuthSystem.Repository.RefreshTokenRepository;
@@ -81,7 +82,42 @@ public class AuthenticationService {
         return new AuthResponse(accessToken, refreshToken);
     }
 
+    public AuthResponse register(RegisterRequest request){
 
+        if (userRepository.findByEmail(request.getEmail()).isPresent()){
+            throw  new RuntimeException("Email already exists");
+        }
+
+        User user = User.builder()
+                .email(request.getEmail())
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .build();
+
+        userRepository.save(user);
+
+        String accessToken = jwtServices.generateToken(
+                new org.springframework.security.core.userdetails.User(
+                  user.getEmail(),
+                  user.getPassword(),
+                  List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                )
+        );
+
+        String refreshToken = UUID.randomUUID().toString();
+
+        refreshTokenRepository.save(
+                RefreshToken.builder()
+                        .token(refreshToken)
+                        .user(user)
+                        .expiryDate(LocalDateTime.now().plusDays(7))
+                        .revoked(false)
+                        .build()
+        );
+
+        return new AuthResponse(accessToken,refreshToken);
+
+    }
 
     //Full Flow Summary
     //
