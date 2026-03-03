@@ -3,6 +3,7 @@ package com.example.AuthSystem.Services;
 import com.example.AuthSystem.Config.JwtServices;
 import com.example.AuthSystem.DTO.AuthResponse;
 import com.example.AuthSystem.DTO.LoginRequest;
+import com.example.AuthSystem.DTO.RefreshRequest;
 import com.example.AuthSystem.DTO.RegisterRequest;
 import com.example.AuthSystem.Entity.RefreshToken;
 import com.example.AuthSystem.Entity.User;
@@ -118,6 +119,55 @@ public class AuthenticationService {
         return new AuthResponse(accessToken,refreshToken);
 
     }
+public AuthResponse refresh(RefreshRequest request){
+
+
+            RefreshToken storedToken = refreshTokenRepository
+                    .findByToken(request.getRefreshToken())
+                    .orElseThrow(()-> new RuntimeException("Token not found"));
+
+            if (storedToken.isRevoked()){
+                throw  new RuntimeException("Token is already revoked");
+            }
+
+            if (storedToken.getExpiryDate().isBefore(LocalDateTime.now())){
+                throw new RuntimeException("Refresh token is expired");
+            }
+
+            User user = storedToken.getUser();
+
+            List<SimpleGrantedAuthority> authorities=
+                    user.getRoles()
+                            .stream()
+                            .map(role -> new SimpleGrantedAuthority(role.getName()))
+                            .toList();
+
+                String newAccessToken = jwtServices.generateToken(
+                        new org.springframework.security.core.userdetails.User(
+                                user.getEmail(),
+                                user.getPassword(),
+                                authorities
+                        )
+                );
+
+
+                storedToken.setRevoked(true);
+             refreshTokenRepository.save(storedToken);
+
+             String newRefreshToken = UUID.randomUUID().toString();
+
+            refreshTokenRepository.save(
+                    RefreshToken.builder()
+                            .token(newRefreshToken)
+                            .user(user)
+                            .expiryDate(LocalDateTime.now().plusDays(7))
+                            .revoked(false)
+                            .build()
+            );
+
+            return new AuthResponse(newAccessToken, newRefreshToken);
+}
+
 
     //Full Flow Summary
     //
