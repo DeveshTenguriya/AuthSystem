@@ -52,15 +52,18 @@ public class AuthenticationService {
                 .findByEmail(request.getEmail())
                 .orElseThrow(()-> new RuntimeException("User not found"));
 
+        List<SimpleGrantedAuthority> authorities =
+                user.getRoles()
+                        .stream()
+                        .map(role -> new SimpleGrantedAuthority(role.getName()))
+                        .toList();
+
         String accessToken=
                 jwtServices.generateToken(
                         new org.springframework.security.core.userdetails.User(
                                 user.getEmail(),
                                 user.getPassword(),
-                                List.of(new SimpleGrantedAuthority(user.getRoles()
-                                        .stream()
-                                        .map(role -> new SimpleGrantedAuthority(role.getName()))
-                                        .toList().toString()))
+                                authorities
                         )
                 );
 
@@ -77,6 +80,8 @@ public class AuthenticationService {
 
         return new AuthResponse(accessToken, refreshToken);
     }
+
+
 
     //Full Flow Summary
     //
