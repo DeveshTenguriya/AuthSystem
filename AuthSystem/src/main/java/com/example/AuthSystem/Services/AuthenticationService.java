@@ -9,7 +9,6 @@ import com.example.AuthSystem.Entity.RefreshToken;
 import com.example.AuthSystem.Entity.User;
 import com.example.AuthSystem.Repository.RefreshTokenRepository;
 import com.example.AuthSystem.Repository.UserRepository;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
