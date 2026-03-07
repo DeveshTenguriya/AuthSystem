@@ -40,6 +40,7 @@ public class AuthController {
         );
     }
 
+    @PostMapping(path = "/refresh")
   public ResponseEntity<AuthResponse> refreshToken(
           @RequestBody RefreshRequest request){
 
