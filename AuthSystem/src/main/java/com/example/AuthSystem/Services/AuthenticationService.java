@@ -117,9 +117,12 @@ public class AuthenticationService {
         return new AuthResponse(accessToken,refreshToken);
 
     }
-public AuthResponse refresh(RefreshRequest request){
 
 
+    public AuthResponse refresh(RefreshRequest request){
+
+
+        //find the refresh token in DataBase
             RefreshToken storedToken = refreshTokenRepository
                     .findByToken(request.getRefreshToken())
                     .orElseThrow(()-> new RuntimeException("Token not found"));
@@ -134,12 +137,14 @@ public AuthResponse refresh(RefreshRequest request){
 
             User user = storedToken.getUser();
 
+            //Extract authorities properly
             List<SimpleGrantedAuthority> authorities=
                     user.getRoles()
                             .stream()
                             .map(role -> new SimpleGrantedAuthority(role.getName()))
                             .toList();
 
+            //Generate new access token
                 String newAccessToken = jwtServices.generateToken(
                         new org.springframework.security.core.userdetails.User(
                                 user.getEmail(),
@@ -149,7 +154,8 @@ public AuthResponse refresh(RefreshRequest request){
                 );
 
 
-                storedToken.setRevoked(true);
+                //Rotate Refresh Token
+             storedToken.setRevoked(true);
              refreshTokenRepository.save(storedToken);
 
              String newRefreshToken = UUID.randomUUID().toString();
@@ -164,7 +170,11 @@ public AuthResponse refresh(RefreshRequest request){
             );
 
             return new AuthResponse(newAccessToken, newRefreshToken);
-}
+    }
+
+    public AuthResponse logout(RefreshRequest request){
+
+    }
 
 
 
