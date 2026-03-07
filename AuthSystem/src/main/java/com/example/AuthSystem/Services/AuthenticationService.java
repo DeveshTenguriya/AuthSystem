@@ -9,6 +9,7 @@ import com.example.AuthSystem.Entity.RefreshToken;
 import com.example.AuthSystem.Entity.User;
 import com.example.AuthSystem.Repository.RefreshTokenRepository;
 import com.example.AuthSystem.Repository.UserRepository;
+import org.slf4j.Marker;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -172,7 +173,18 @@ public class AuthenticationService {
             return new AuthResponse(newAccessToken, newRefreshToken);
     }
 
-    public AuthResponse logout(RefreshRequest request){
+    public void logout(RefreshRequest request){
+
+        //
+        RefreshToken storedToken = refreshTokenRepository
+                .findByToken(request.getRefreshToken())
+                .orElseThrow(()->
+                        new RuntimeException("Token not found")
+                );
+
+        storedToken.setRevoked(true);
+
+        refreshTokenRepository.save(storedToken);
 
     }
 
