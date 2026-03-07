@@ -15,6 +15,13 @@ public class AuthSystemApplication {
 
 }
 
+//registered user
+//{
+//  "username": "devesh",
+//  "email": "devesh@gmail.com",
+//  "password": "12345678"
+//}
+
 //com.devesh.authsystem
 //│
 //├── AuthSystemApplication.java
