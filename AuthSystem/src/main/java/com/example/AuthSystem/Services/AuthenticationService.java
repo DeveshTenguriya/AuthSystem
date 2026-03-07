@@ -175,15 +175,17 @@ public class AuthenticationService {
 
     public void logout(RefreshRequest request){
 
-        //
+        //find the token in database
         RefreshToken storedToken = refreshTokenRepository
                 .findByToken(request.getRefreshToken())
                 .orElseThrow(()->
                         new RuntimeException("Token not found")
                 );
 
+        //set the token as revoked
         storedToken.setRevoked(true);
 
+        //save the change now user will automatically logout as his token is revoked from the system
         refreshTokenRepository.save(storedToken);
 
     }
