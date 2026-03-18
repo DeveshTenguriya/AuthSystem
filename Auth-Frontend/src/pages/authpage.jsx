@@ -1,40 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../store/AuthContext";
-import { loginUser, registerUser } from "../api/authApi";
+import { authApi } from "../api/authApi";
 import "./AuthPage.css";
 
-/**
- * AuthPage.jsx
- *
- * PURPOSE:
- * This is the ENTRY POINT of the entire app. It handles two things:
- *   1. LOGIN  — existing user submits email + password → gets JWT tokens → goes to /dashboard
- *   2. REGISTER — new user submits name + email + password → account created → auto-login
- *
- * It replaces BOTH LoginPage.jsx and RegisterPage.jsx from the original plan.
- * Instead of two separate routes, login and register are tabs on one page.
- * This is a common modern pattern (used by Notion, Linear, Vercel, etc.)
- *
- * FLOW:
- * User lands here → picks Login or Register tab → submits form
- * → calls Spring Boot /api/auth/login or /api/auth/register
- * → on success: saves tokens via AuthContext → redirects to /dashboard
- * → on error: shows inline error message
- *
- * CONNECTS TO:
- * - authApi.js         (makes the actual HTTP calls)
- * - AuthContext.jsx    (saves the token + user state globally)
- * - ProtectedRoute.jsx (this page is the destination after logout)
- */
-
 export default function AuthPage() {
-  const [tab, setTab] = useState("login");         // "login" | "register"
+  const [tab, setTab] = useState("login");
   const [form, setForm] = useState({ fullName: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { handleTokenFromUrl } = useAuth();      // ✅ fixed — useAuth has no "login", use handleTokenFromUrl
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -51,25 +27,32 @@ export default function AuthPage() {
       let response;
 
       if (tab === "login") {
-        // POST /api/auth/login  →  { accessToken, refreshToken, role, email, fullName }
-        response = await loginUser({ email: form.email, password: form.password });
+        // ✅ authApi.login instead of loginUser
+        response = await authApi.login(form.email, form.password);
       } else {
-        // POST /api/auth/register  →  same shape as login response
-        response = await registerUser({
+        // ✅ authApi.register instead of registerUser
+        response = await authApi.register({
           fullName: form.fullName,
           email: form.email,
           password: form.password,
         });
       }
 
-      // Save tokens + user info into context (and localStorage via tokenUtils)
-      login(response.data);
+      const { accessToken, refreshToken } = response.data;
 
-      // Role-based redirect: admins go to /admin, everyone else to /dashboard
-      if (response.data.role === "ADMIN") {
+      // ✅ save tokens via handleTokenFromUrl (matches your AuthContext)
+      const result = await handleTokenFromUrl(accessToken, refreshToken);
+
+      if (!result.success) {
+        setError(result.error || "Authentication failed");
+        return;
+      }
+
+      // ✅ role-based redirect — your backend returns ROLE_ADMIN / ROLE_USER
+      if (response.data.role === "ROLE_ADMIN") {
         navigate("/admin");
       } else {
-        navigate("/dashboard");
+        navigate("/profile");   // ✅ fixed — your route is /profile not /dashboard
       }
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong. Please try again.");
@@ -80,20 +63,17 @@ export default function AuthPage() {
 
   return (
     <div className="auth-root">
-      {/* Animated background grid */}
       <div className="auth-bg">
         <div className="auth-grid" />
         <div className="auth-glow" />
       </div>
 
       <div className="auth-card">
-        {/* Brand mark */}
         <div className="auth-brand">
           <span className="auth-logo">⬡</span>
           <span className="auth-brand-name">AuthSystem</span>
         </div>
 
-        {/* Tab switcher */}
         <div className="auth-tabs">
           <button
             className={`auth-tab ${tab === "login" ? "active" : ""}`}
@@ -107,12 +87,10 @@ export default function AuthPage() {
           >
             Register
           </button>
-          {/* Sliding indicator */}
           <div className={`auth-tab-indicator ${tab === "register" ? "right" : ""}`} />
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
-          {/* Full name — only shown on register tab */}
           {tab === "register" && (
             <div className="auth-field">
               <label htmlFor="fullName">Full Name</label>
@@ -157,11 +135,13 @@ export default function AuthPage() {
             />
           </div>
 
-          {/* Inline error */}
           {error && <p className="auth-error">{error}</p>}
 
           <button type="submit" className="auth-submit" disabled={loading}>
-            {loading ? <span className="auth-spinner" /> : tab === "login" ? "Sign In" : "Create Account"}
+            {loading
+              ? <span className="auth-spinner" />
+              : tab === "login" ? "Sign In" : "Create Account"
+            }
           </button>
         </form>
 
