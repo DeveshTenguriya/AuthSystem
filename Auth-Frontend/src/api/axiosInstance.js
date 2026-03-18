@@ -1,14 +1,14 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api/v1";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const api = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
 
-// ─── REQUEST INTERCEPTOR 
-// Attach access token to every request automatically
+// ─── REQUEST INTERCEPTOR ──────────────────────────────────────────────────────
+// Automatically attaches accessToken to every request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
@@ -21,71 +21,58 @@ api.interceptors.request.use(
 );
 
 // ─── RESPONSE INTERCEPTOR ─────────────────────────────────────────────────────
-// On 401 → try refresh → retry original request → if refresh fails → logout
+// On 401 → call /api/auth/refresh → retry original request
+// On refresh failure → clear storage → redirect to /auth
 let isRefreshing = false;
-let failedQueue = [];
+let failedQueue  = [];
 
 const processQueue = (error, token = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
+  failedQueue.forEach((p) => (error ? p.reject(error) : p.resolve(token)));
   failedQueue = [];
 };
 
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    const original = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !original._retry) {
       if (isRefreshing) {
-        // Queue this request until refresh is done
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        })
-          .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            return api(originalRequest);
-          })
-          .catch((err) => Promise.reject(err));
+        }).then((token) => {
+          original.headers.Authorization = `Bearer ${token}`;
+          return api(original);
+        });
       }
 
-      originalRequest._retry = true;
-      isRefreshing = true;
+      original._retry  = true;
+      isRefreshing     = true;
 
       const refreshToken = localStorage.getItem("refreshToken");
-
       if (!refreshToken) {
-        clearAuthAndRedirect();
+        clearAndRedirect();
         return Promise.reject(error);
       }
 
       try {
-        const { data } = await axios.post(`${BASE_URL}/auth/refresh`, {
+        // POST /api/auth/refresh → { accessToken }
+        const { data } = await axios.post(`${BASE_URL}/api/auth/refresh`, {
           refreshToken,
         });
 
-        const newAccessToken = data.accessToken || data.data?.accessToken;
-        const newRefreshToken = data.refreshToken || data.data?.refreshToken;
+        const newAccess = data.accessToken;
+        localStorage.setItem("accessToken", newAccess);
 
-        localStorage.setItem("accessToken", newAccessToken);
-        if (newRefreshToken) {
-          localStorage.setItem("refreshToken", newRefreshToken);
-        }
+        api.defaults.headers.common.Authorization = `Bearer ${newAccess}`;
+        processQueue(null, newAccess);
 
-        api.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
-        processQueue(null, newAccessToken);
-
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return api(originalRequest);
-      } catch (refreshError) {
-        processQueue(refreshError, null);
-        clearAuthAndRedirect();
-        return Promise.reject(refreshError);
+        original.headers.Authorization = `Bearer ${newAccess}`;
+        return api(original);
+      } catch (err) {
+        processQueue(err, null);
+        clearAndRedirect();
+        return Promise.reject(err);
       } finally {
         isRefreshing = false;
       }
@@ -95,11 +82,11 @@ api.interceptors.response.use(
   }
 );
 
-function clearAuthAndRedirect() {
+function clearAndRedirect() {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("user");
-  window.location.href = "/login";
+  window.location.href = "/auth";
 }
 
 export default api;
