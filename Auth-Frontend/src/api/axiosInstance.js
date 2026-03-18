@@ -7,7 +7,7 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// ─── REQUEST INTERCEPTOR ───────────────────────────────────────────────────────
+// ─── REQUEST INTERCEPTOR ───────────────────────────────────────
 // Attach access token to every request automatically
 api.interceptors.request.use(
   (config) => {
