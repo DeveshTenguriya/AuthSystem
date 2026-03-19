@@ -22,23 +22,10 @@ public class CustomUserDetailsService implements UserDetailsService {
             throws UsernameNotFoundException {
 
         User user = userRepository.findByEmail(username)
-                .orElseThrow(() ->
+                                                                           .orElseThrow(() ->
                         new UsernameNotFoundException("User not found"));
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-               user.getRoles()
-                       .stream()
-                       .map(role ->{
-                           String roleName = role.getName();
-                           if (!roleName.startsWith("ROLE_")) {
-                               roleName = "ROLE_" + roleName;
-                           }
-                           return new SimpleGrantedAuthority(role.getName());
-                       })
-                       .collect(Collectors.toSet())
-        );
+        return new
     }
 
     //Why This Class Is Critical
