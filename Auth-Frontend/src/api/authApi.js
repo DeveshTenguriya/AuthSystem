@@ -24,8 +24,9 @@ export const authApi = {
 
   // POST /api/v1/auth/logout
   // Header: Authorization: Bearer <token>
-  logout: () =>
-    api.post("/auth/logout"),
+  logout: (refreshToken) =>
+      api.post("/auth/logout", { refreshToken }),
+
 
   // GET /api/v1/auth/me  (optional — if you have this endpoint)
   // Returns current user profile from token
