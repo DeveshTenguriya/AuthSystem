@@ -6,7 +6,7 @@ import "./AuthPage.css";
 
 export default function AuthPage() {
   const [tab, setTab] = useState("login");
-  const [form, setForm] = useState({ fullName: "", email: "", password: "" });
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +32,7 @@ export default function AuthPage() {
       } else {
         // ✅ authApi.register instead of registerUser
         response = await authApi.register({
-          fullName: form.fullName,
+          fullName: form.username,
           email: form.email,
           password: form.password,
         });
@@ -90,22 +90,22 @@ export default function AuthPage() {
           <div className={`auth-tab-indicator ${tab === "register" ? "right" : ""}`} />
         </div>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          {tab === "register" && (
-            <div className="auth-field">
-              <label htmlFor="fullName">Full Name</label>
-              <input
-                id="fullName"
-                name="fullName"
-                type="text"
-                placeholder="Devesh Tenguriya"
-                value={form.fullName}
-                onChange={handleChange}
-                required
-                autoComplete="name"
-              />
-            </div>
-          )}
+       <form className="auth-form" onSubmit={handleSubmit}>
+                 {tab === "register" && (
+                   <div className="auth-field">
+                     <label htmlFor="username">Username</label>  {/* ✅ was fullName */}
+                     <input
+                       id="username"
+                       name="username"           // ✅ was fullName
+                       type="text"
+                       placeholder="Devesh"      // ✅ updated placeholder
+                       value={form.username}     // ✅ was form.fullName
+                       onChange={handleChange}
+                       required
+                       autoComplete="username"   // ✅ was name
+                     />
+                   </div>
+                 )}
 
           <div className="auth-field">
             <label htmlFor="email">Email Address</label>
