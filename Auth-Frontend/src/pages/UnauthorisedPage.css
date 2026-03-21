@@ -1,0 +1,188 @@
+/* UnauthorisedPage.css */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+* { box-sizing: border-box; }
+
+.unauth-root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #080c14;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.unauth-bg { position: fixed; inset: 0; pointer-events: none; }
+
+.unauth-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+}
+
+.b1 {
+  width: 500px; height: 500px;
+  top: -150px; left: -100px;
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.b2 {
+  width: 400px; height: 400px;
+  bottom: -100px; right: -80px;
+  background: rgba(59, 130, 246, 0.07);
+}
+
+.unauth-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  background: rgba(13, 20, 35, 0.90);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 24px;
+  padding: 48px 40px 40px;
+  text-align: center;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 60px rgba(220, 38, 38, 0.06), 0 24px 48px rgba(0,0,0,0.5);
+  animation: cardIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: scale(0.96) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Icon */
+.unauth-icon-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+}
+
+.unauth-shield {
+  font-size: 52px;
+  opacity: 0.25;
+}
+
+.unauth-cross {
+  position: absolute;
+  font-size: 28px;
+  font-weight: 900;
+  color: #f87171;
+  text-shadow: 0 0 20px rgba(248, 113, 113, 0.6);
+}
+
+/* Code */
+.unauth-code {
+  font-family: 'Syne', sans-serif;
+  font-size: 72px;
+  font-weight: 800;
+  color: transparent;
+  background: linear-gradient(135deg, #f87171, #dc2626);
+  -webkit-background-clip: text;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 12px;
+  letter-spacing: -2px;
+}
+
+.unauth-title {
+  margin: 0 0 12px;
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.unauth-message {
+  margin: 0 0 28px;
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.unauth-message strong {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* Actions */
+.unauth-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.unauth-btn {
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.unauth-btn.primary {
+  background: linear-gradient(135deg, #3b82f6, #1d6a9f);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(59,130,246,0.3);
+}
+
+.unauth-btn.primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.unauth-btn.secondary {
+  background: rgba(239,68,68,0.1);
+  border-color: rgba(239,68,68,0.2);
+  color: #f87171;
+}
+
+.unauth-btn.secondary:hover {
+  background: rgba(239,68,68,0.18);
+}
+
+/* Info block */
+.unauth-info {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 16px 18px;
+  text-align: left;
+}
+
+.unauth-info-title {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.unauth-info-body {
+  margin: 0;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.unauth-info-body code {
+  background: rgba(255,255,255,0.07);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #93c5fd;
+}
