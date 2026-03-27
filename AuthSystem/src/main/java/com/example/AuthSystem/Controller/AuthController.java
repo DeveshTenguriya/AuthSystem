@@ -58,6 +58,11 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<?> me(@AuthenticationPrincipal UserDetails userDetails) {
+
+        if (userDetails == null) {
+            return ResponseEntity.status(401)
+                    .body(Map.of("error", "Not authenticated"));
+        }
         // If JWT is invalid, filter blocks request before reaching here
         // If we reach here, token is already validated ✅
         return ResponseEntity.ok(Map.of(
