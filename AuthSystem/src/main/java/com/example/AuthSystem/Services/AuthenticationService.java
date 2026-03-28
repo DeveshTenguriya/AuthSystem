@@ -1,5 +1,6 @@
 package com.example.AuthSystem.Services;
 
+import com.example.AuthSystem.Config.CustomUserDetails;
 import com.example.AuthSystem.Config.JwtServices;
 import com.example.AuthSystem.DTO.AuthResponse;
 import com.example.AuthSystem.DTO.LoginRequest;
@@ -59,14 +60,11 @@ public class AuthenticationService {
                         .map(role -> new SimpleGrantedAuthority(role.getName()))
                         .toList();
 
+        //Use CustomUserDetails — includes ROLE_ prefix + permissions
+        CustomUserDetails userDetails= new CustomUserDetails(user);
+
         String accessToken=
-                jwtServices.generateToken(
-                        new org.springframework.security.core.userdetails.User(
-                                user.getEmail(),
-                                user.getPassword(),
-                                authorities
-                        )
-                );
+                jwtServices.generateToken(userDetails);
 
         String refreshToken = UUID.randomUUID().toString();
 
@@ -79,7 +77,13 @@ public class AuthenticationService {
                         .build()
         );
 
-        return new AuthResponse(accessToken, refreshToken);
+        //Extract role for response
+        String role = user.getRoles().stream()
+                .map(r -> "ROLE_" + r.getName())
+                .findFirst()
+                .orElse("ROLE_USER");
+
+        return new AuthResponse(accessToken, refreshToken,role, user.getUsername());
     }
 
     public AuthResponse register(RegisterRequest request){
