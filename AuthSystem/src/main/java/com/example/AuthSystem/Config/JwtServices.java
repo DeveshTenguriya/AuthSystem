@@ -3,10 +3,13 @@ package com.example.AuthSystem.Config;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtServices {
@@ -15,8 +18,16 @@ public class JwtServices {
     private final String SECRET= "ichigocansoloallthebig3verseandheisthestrongestMCinthe3";
 
     public String generateToken(UserDetails userDetails) {
+
+        // Extract permissions from authorities
+        List<String> authorities = userDetails.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
         String token= Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("authorities",authorities)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+EXPIRATION))
                 .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()), SignatureAlgorithm.HS256)
