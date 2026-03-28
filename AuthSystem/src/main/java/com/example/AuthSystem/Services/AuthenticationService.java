@@ -7,8 +7,10 @@ import com.example.AuthSystem.DTO.LoginRequest;
 import com.example.AuthSystem.DTO.RefreshRequest;
 import com.example.AuthSystem.DTO.RegisterRequest;
 import com.example.AuthSystem.Entity.RefreshToken;
+import com.example.AuthSystem.Entity.Role;
 import com.example.AuthSystem.Entity.User;
 import com.example.AuthSystem.Repository.RefreshTokenRepository;
+import com.example.AuthSystem.Repository.RoleRepository;
 import com.example.AuthSystem.Repository.UserRepository;
 import org.slf4j.Marker;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -31,15 +34,16 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository  roleRepository;
 
-    public AuthenticationService(AuthenticationManager authenticationManager, JwtServices jwtServices, UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, PasswordEncoder passwordEncoder) {
+    public AuthenticationService(AuthenticationManager authenticationManager, JwtServices jwtServices, UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtServices = jwtServices;
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
-
 
     public AuthResponse login(LoginRequest request){
 
@@ -92,10 +96,16 @@ public class AuthenticationService {
             throw  new RuntimeException("Email already exists");
         }
 
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException(
+                        "ROLE_USER not found — make sure DataSeeder has run"
+                ));
+
         User user = User.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .roles(Set.of(userRole))
                 .build();
 
         userRepository.save(user);
