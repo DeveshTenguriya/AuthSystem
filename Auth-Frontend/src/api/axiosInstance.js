@@ -87,3 +87,27 @@ function clearAndRedirect() {
 }
 
 export default api;
+
+//Complete Flow Diagram
+  ```
+  Every API call
+        ↓
+  Request Interceptor → adds Bearer token
+        ↓
+  Backend processes request
+        ↓
+        ├── 200 OK → Response Interceptor passes through ✅
+        │
+        └── 401 Unauthorized
+                ↓
+            Has refreshToken in localStorage?
+                ├── NO → clearAndRedirect() → /auth ❌
+                └── YES
+                        ↓
+                    POST /auth/refresh
+                        ├── FAILS → clearAndRedirect() → /auth ❌
+                        └── SUCCESS
+                                ↓
+                            Save new accessToken
+                            Retry original request ✅
+                            User sees nothing
