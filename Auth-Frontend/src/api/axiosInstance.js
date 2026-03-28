@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -8,7 +8,6 @@ const api = axios.create({
 });
 
 // ─── REQUEST INTERCEPTOR ──────────────────────────────────────────────────────
-// Automatically attaches accessToken to every request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
@@ -21,8 +20,6 @@ api.interceptors.request.use(
 );
 
 // ─── RESPONSE INTERCEPTOR ─────────────────────────────────────────────────────
-// On 401 → call /api/auth/refresh → retry original request
-// On refresh failure → clear storage → redirect to /auth
 let isRefreshing = false;
 let failedQueue  = [];
 
@@ -46,8 +43,8 @@ api.interceptors.response.use(
         });
       }
 
-      original._retry  = true;
-      isRefreshing     = true;
+      original._retry = true;
+      isRefreshing    = true;
 
       const refreshToken = localStorage.getItem("refreshToken");
       if (!refreshToken) {
@@ -56,8 +53,8 @@ api.interceptors.response.use(
       }
 
       try {
-        // POST /api/auth/refresh → { accessToken }
-        const { data } = await axios.post(`${BASE_URL}/api/auth/refresh`, {
+        // ✅ Now correctly uses BASE_URL which already includes /api
+        const { data } = await axios.post(`${BASE_URL}/auth/refresh`, {
           refreshToken,
         });
 
