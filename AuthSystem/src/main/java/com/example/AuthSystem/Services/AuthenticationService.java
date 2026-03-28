@@ -100,13 +100,9 @@ public class AuthenticationService {
 
         userRepository.save(user);
 
-        String accessToken = jwtServices.generateToken(
-                new org.springframework.security.core.userdetails.User(
-                  user.getEmail(),
-                  user.getPassword(),
-                  List.of(new SimpleGrantedAuthority("ROLE_USER"))
-                )
-        );
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+
+        String accessToken = jwtServices.generateToken(userDetails);
 
         String refreshToken = UUID.randomUUID().toString();
 
@@ -119,7 +115,8 @@ public class AuthenticationService {
                         .build()
         );
 
-        return new AuthResponse(accessToken,refreshToken);
+        //new users get the role USER by default
+        return new AuthResponse(accessToken,refreshToken,"ROLE_USER", user.getUsername());
 
     }
 
