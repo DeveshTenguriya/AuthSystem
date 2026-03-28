@@ -139,21 +139,12 @@ public class AuthenticationService {
 
             User user = storedToken.getUser();
 
-            //Extract authorities properly
-            List<SimpleGrantedAuthority> authorities=
-                    user.getRoles()
-                            .stream()
-                            .map(role -> new SimpleGrantedAuthority(role.getName()))
-                            .toList();
+            CustomUserDetails userDetails = new CustomUserDetails(user);
+
+
 
             //Generate new access token
-                String newAccessToken = jwtServices.generateToken(
-                        new org.springframework.security.core.userdetails.User(
-                                user.getEmail(),
-                                user.getPassword(),
-                                authorities
-                        )
-                );
+                String newAccessToken = jwtServices.generateToken(userDetails);
 
 
                 //Rotate Refresh Token
@@ -171,7 +162,13 @@ public class AuthenticationService {
                             .build()
             );
 
-            return new AuthResponse(newAccessToken, newRefreshToken);
+        String role = user.getRoles().stream()
+                .map(r -> "ROLE_" + r.getName())
+                .findFirst()
+                .orElse("ROLE_USER");
+
+
+        return new AuthResponse(newAccessToken, newRefreshToken, role, user.getUsername());
     }
 
     public void logout(RefreshRequest request){
