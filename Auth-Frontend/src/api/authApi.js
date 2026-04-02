@@ -32,4 +32,9 @@ export const authApi = {
   // Returns current user profile from token
   me: () =>
     api.get("/auth/me"),
+
+    validateToken: (token) =>
+      api.get("/auth/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      }),
 };
