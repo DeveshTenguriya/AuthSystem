@@ -37,6 +37,4 @@ export const authApi = {
       api.get("/auth/me", {
         headers: { Authorization: `Bearer ${token}` }
       }),
-
-      
 };
