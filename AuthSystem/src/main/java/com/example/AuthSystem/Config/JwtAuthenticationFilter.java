@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -44,11 +45,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         token= authHeader.substring(7);
         username = jwtServices.extractUsername(token);
 
+        // ✅ Handle invalid/expired/malformed token
+        try {
+            username = jwtServices.extractUsername(token);
+        } catch (Exception e) {
+            System.out.println("Invalid token — skipping: " + e.getMessage());
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if(username!=null &&
                 SecurityContextHolder.getContext().getAuthentication()==null){
             UserDetails userDetails=
                     userDetailsService
                     .loadUserByUsername(username);
+
+            // ✅ Handle deleted user — token valid but user no longer in DB
+            try {
+                userDetails = userDetailsService.loadUserByUsername(username);
+            } catch (UsernameNotFoundException e) {
+                System.out.println("User not found for token — skipping: " + username);
+                filterChain.doFilter(request, response);
+                return;
+            }
 
 
           if (jwtServices.validateToken(token,userDetails)){
