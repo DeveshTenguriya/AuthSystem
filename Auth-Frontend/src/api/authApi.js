@@ -1,6 +1,6 @@
 import api from "./axiosInstance";
 
-// ─── AUTH ENDPOINTS ───────────────────────────────────────────────────────────
+// ─── AUTH ENDPOINTS ─────────────────────────────────────────────
 // These match your Spring Boot Phase 2 + 3 endpoints exactly
 
 export const authApi = {
@@ -37,6 +37,4 @@ export const authApi = {
       api.get("/auth/me", {
         headers: { Authorization: `Bearer ${token}` }
       }),
-
-
 };
