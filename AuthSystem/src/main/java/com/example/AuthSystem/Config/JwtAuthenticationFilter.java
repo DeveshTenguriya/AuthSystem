@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         System.out.println("JWT FILTER RUNNING");
 
         token= authHeader.substring(7);
-        username = jwtServices.extractUsername(token);
+
 
         // ✅ Handle invalid/expired/malformed token
         try {
