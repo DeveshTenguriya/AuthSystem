@@ -56,9 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if(username!=null &&
                 SecurityContextHolder.getContext().getAuthentication()==null){
-            UserDetails userDetails=
-                    userDetailsService
-                    .loadUserByUsername(username);
+            UserDetails userDetails;
 
             // ✅ Handle deleted user — token valid but user no longer in DB
             try {
