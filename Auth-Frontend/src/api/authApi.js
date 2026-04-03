@@ -1,6 +1,6 @@
 import api from "./axiosInstance";
 
-// ─── AUTH ENDPOINTS 
+//AUTH ENDPOINTS
 // These match your Spring Boot Phase 2 + 3 endpoints exactly
 
 export const authApi = {
