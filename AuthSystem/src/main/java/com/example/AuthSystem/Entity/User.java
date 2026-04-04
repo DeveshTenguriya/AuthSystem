@@ -29,8 +29,12 @@ public class User {
 
     private String password;
 
+    @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean enabled = true;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean accountNonLocked = true;
+
     private int failedAttempts = 0;
 
     @ManyToMany(fetch = FetchType.EAGER)
