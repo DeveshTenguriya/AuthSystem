@@ -33,16 +33,16 @@ export function getRoleFromToken(token) {
       const role = list.find(a => a.startsWith("ROLE_"));
       return role || null;
 
-  // Try all common Spring Boot role field names
-  const roles =
-    decoded.roles        ||
-    decoded.authorities  ||
-    decoded.role         ||
-    [];
-
-  // Handle both array and string
-  const raw = Array.isArray(roles) ? roles[0] : roles;
-  return raw || null;
+//  // Try all common Spring Boot role field names
+//  const roles =
+//    decoded.roles        ||
+//    decoded.authorities  ||
+//    decoded.role         ||
+//    [];
+//
+//  // Handle both array and string
+//  const raw = Array.isArray(roles) ? roles[0] : roles;
+//  return raw || null;
 }
 
 // ─── ROLE CHECKS ─────────────────────────────────────────────────────────────
