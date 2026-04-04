@@ -55,9 +55,8 @@ public class SecurityBeansConfig {
         return configuration.getAuthenticationManager();
     }
 
-    // ✅ ADD THIS — without it Spring Security can't verify passwords
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
