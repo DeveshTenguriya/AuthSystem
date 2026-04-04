@@ -121,6 +121,9 @@ public class AuthenticationService {
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(Set.of(userRole))
+                .accountNonLocked(true)
+                .enabled(true)
+                .failedAttempts(0)
                 .build();
 
         userRepository.save(user);
