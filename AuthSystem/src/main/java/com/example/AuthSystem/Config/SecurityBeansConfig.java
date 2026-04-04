@@ -35,6 +35,7 @@ public class SecurityBeansConfig {
                 .csrf(csrf -> csrf.disable()).sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                  .authorizeHttpRequests(auth -> auth
+                         .requestMatchers("/api/auth/me").authenticated()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/users/**").hasAnyRole("USER","ADMIN")
@@ -54,5 +55,10 @@ public class SecurityBeansConfig {
         return configuration.getAuthenticationManager();
     }
 
+    // ✅ ADD THIS — without it Spring Security can't verify passwords
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 }
