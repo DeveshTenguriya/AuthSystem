@@ -47,12 +47,27 @@ public class AuthenticationService {
 
     public AuthResponse login(LoginRequest request){
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword())
+        System.out.println("=== LOGIN DEBUG ===");
+        System.out.println("Email: " + request.getEmail());
+        System.out.println("Password length: " + request.getPassword().length());
 
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword())
+            );
+            System.out.println("✅ Authentication SUCCESS");
+        } catch (Exception e) {
+            System.out.println("❌ Authentication FAILED: " + e.getClass().getSimpleName() + " — " + e.getMessage());
+            throw e;
+        }
+//        authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(
+//                        request.getEmail(),
+//                        request.getPassword())
+//
+//        );
 
         User user=userRepository
                 .findByEmail(request.getEmail())
