@@ -58,11 +58,11 @@ public class AuthenticationService {
                 .findByEmail(request.getEmail())
                 .orElseThrow(()-> new RuntimeException("User not found"));
 
-        List<SimpleGrantedAuthority> authorities =
-                user.getRoles()
-                        .stream()
-                        .map(role -> new SimpleGrantedAuthority(role.getName()))
-                        .toList();
+//        List<SimpleGrantedAuthority> authorities =
+//                user.getRoles()
+//                        .stream()
+//                        .map(role -> new SimpleGrantedAuthority(role.getName()))
+//                        .toList();
 
         //Use CustomUserDetails — includes ROLE_ prefix + permissions
         CustomUserDetails userDetails= new CustomUserDetails(user);
@@ -83,7 +83,7 @@ public class AuthenticationService {
 
         //Extract role for response
         String role = user.getRoles().stream()
-                .map(r -> "ROLE_" + r.getName())
+                .map(Role::getName)
                 .findFirst()
                 .orElse("ROLE_USER");
 
@@ -173,7 +173,7 @@ public class AuthenticationService {
             );
 
         String role = user.getRoles().stream()
-                .map(r -> "ROLE_" + r.getName())
+                .map(Role::getName)
                 .findFirst()
                 .orElse("ROLE_USER");
 
