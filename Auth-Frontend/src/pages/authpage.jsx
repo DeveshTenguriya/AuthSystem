@@ -28,6 +28,7 @@ export default function AuthPage() {
 
       if (tab === "login") {
         // ✅ authApi.login instead of loginUser
+        console.log("Sending login:", { email: form.email, password: form.password });
         response = await authApi.login(form.email, form.password);
       } else {
         // ✅ authApi.register instead of registerUser
