@@ -25,6 +25,14 @@ export function getRoleFromToken(token) {
   const decoded = decodeToken(token);
   if (!decoded) return null;
 
+  //Your Spring Boot puts everything in "authorities"
+    const authorities = decoded.authorities || decoded.roles || [];
+    const list = Array.isArray(authorities) ? authorities : [authorities];
+
+    // ✅ Find the entry that starts with ROLE_ (ignores permissions like READ_PROFILE)
+      const role = list.find(a => a.startsWith("ROLE_"));
+      return role || null;
+
   // Try all common Spring Boot role field names
   const roles =
     decoded.roles        ||
@@ -54,10 +62,10 @@ export function getUserFromToken(token) {
   if (!decoded) return null;
 
   return {
-    email:    decoded.sub   || decoded.email    || null,
-    fullName: decoded.name  || decoded.fullName || null,
-    role:     getRoleFromToken(token),
-    sub:      decoded.sub   || null,
-    exp:      decoded.exp   || null,
+     email:       decoded.sub || decoded.email || null,
+        username:    decoded.sub || null,           // ✅spring puts
+        role:        getRoleFromToken(token),        // ✅ ROLE_ADMIN or ROLE_USER
+        authorities: decoded.authorities || [],     // ✅ all permissions
+        exp:         decoded.exp || null,
   };
 }
