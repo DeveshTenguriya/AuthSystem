@@ -34,6 +34,7 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(
             @RequestBody LoginRequest request) {
 
+        System.out.println("login hit");
         return ResponseEntity.ok(
                 authenticationService.login(request)
         );
