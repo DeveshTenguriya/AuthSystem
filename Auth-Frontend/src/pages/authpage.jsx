@@ -32,7 +32,7 @@ export default function AuthPage() {
       } else {
         // ✅ authApi.register instead of registerUser
         response = await authApi.register({
-          fullName: form.username,
+          username: form.username,
           email: form.email,
           password: form.password,
         });
@@ -98,7 +98,7 @@ export default function AuthPage() {
                        id="username"
                        name="username"           // ✅ was fullName
                        type="text"
-                       placeholder="Devesh"      // ✅ updated placeholder
+                       placeholder="Enter your name"      // ✅ updated placeholder
                        value={form.username}     // ✅ was form.fullName
                        onChange={handleChange}
                        required
