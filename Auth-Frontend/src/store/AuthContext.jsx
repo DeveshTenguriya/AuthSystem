@@ -47,15 +47,15 @@ export function AuthProvider({ children }) {
       // Step 2 — Validate with backend (sends token, expects 200)
       // If your backend doesn't have /api/auth/me yet,
       // comment out this block and skip straight to Step 3
-      try {
-        await authApi.validateToken(accessToken);
-      } catch (err) {
-        if (err.response?.status === 401 || err.response?.status === 403) {
-          throw new Error("Token rejected by server");
-        }
-        // If endpoint doesn't exist (404) — skip validation, trust client decode
-        if (err.response?.status !== 404) throw err;
-      }
+//       try {
+//         await authApi.validateToken(accessToken);
+//       } catch (err) {
+//         if (err.response?.status === 401 || err.response?.status === 403) {
+//           throw new Error("Token rejected by server");
+//         }
+//         // If endpoint doesn't exist (404) — skip validation, trust client decode
+//         if (err.response?.status !== 404) throw err;
+//       }
 
       // Step 3 — Store tokens
       localStorage.setItem("accessToken", accessToken);
