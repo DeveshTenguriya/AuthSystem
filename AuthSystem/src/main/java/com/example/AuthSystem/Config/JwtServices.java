@@ -25,9 +25,17 @@ public class JwtServices {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
+        List<String> roles = userDetails.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(a -> a.startsWith("ROLE_"))
+                .collect(Collectors.toList());
+
+
         String token= Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .claim("authorities",authorities)
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+EXPIRATION))
                 .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()), SignatureAlgorithm.HS256)
