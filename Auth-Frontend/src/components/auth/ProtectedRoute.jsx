@@ -4,7 +4,6 @@ import { useAuth } from "../../store/AuthContext";
 //PROTECTED ROUTE
 //
 // Usage:
-//
 //   Any authenticated user:
 //   <ProtectedRoute><ProfilePage /></ProtectedRoute>
 //
