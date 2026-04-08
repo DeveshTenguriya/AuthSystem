@@ -12,7 +12,7 @@ import { useAuth } from "../../store/AuthContext";
 //
 // Access matrix:
 //   ROLE_ADMIN → /admin ✅  /profile ✅
-//   ROLE_USER  → /admin ❌  /profile ✅
+//  
 //   No token   → both   ❌  redirected to /auth
 
 export default function ProtectedRoute({ children, requiredRole = null }) {
