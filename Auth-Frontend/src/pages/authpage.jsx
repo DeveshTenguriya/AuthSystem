@@ -41,7 +41,7 @@ export default function AuthPage() {
 
       const { accessToken, refreshToken } = response.data;
 
-      // ✅ save tokens via handleTokenFromUrl (matches your AuthContext)
+
       const result = await handleTokenFromUrl(accessToken, refreshToken);
 
       if (!result.success) {
@@ -49,7 +49,7 @@ export default function AuthPage() {
         return;
       }
 
-
+// ✅ role-based redirect — your backend returns ROLE_ADMIN / ROLE_USER
       if (response.data.role === "ROLE_ADMIN") {
         navigate("/admin");
       } else {
