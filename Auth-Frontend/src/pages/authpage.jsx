@@ -49,7 +49,7 @@ export default function AuthPage() {
         return;
       }
 
-// ✅ role-based redirect — your backend returns ROLE_ADMIN / ROLE_USER
+
       if (response.data.role === "ROLE_ADMIN") {
         navigate("/admin");
       } else {
