@@ -50,6 +50,16 @@ export default function AuthPage() {
         return;
       }
 
+  // ✅ Check both response role AND decoded token role
+  const userRole = response.data.role || result.user?.role;
+  console.log("Redirecting based on role:", userRole);
+
+  if (userRole === "ROLE_ADMIN") {
+    navigate("/admin");
+  } else {
+    navigate("/profile");
+  }
+
 // ✅ role-based redirect — your backend returns ROLE_ADMIN / ROLE_USER
       if (response.data.role === "ROLE_ADMIN") {
         navigate("/admin");
