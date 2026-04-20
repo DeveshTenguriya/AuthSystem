@@ -29,6 +29,10 @@ export function getRoleFromToken(token) {
     const authorities = decoded.authorities || decoded.roles || [];
     const list = Array.isArray(authorities) ? authorities : [authorities];
 
+    // ✅ Prioritize ROLE_ADMIN over ROLE_USER
+      if (list.includes("ROLE_ADMIN")) return "ROLE_ADMIN";
+      if (list.includes("ROLE_USER")) return "ROLE_USER";
+
     // ✅ Find the entry that starts with ROLE_ (ignores permissions like READ_PROFILE)
       const role = list.find(a => a.startsWith("ROLE_"));
       return role || null;
