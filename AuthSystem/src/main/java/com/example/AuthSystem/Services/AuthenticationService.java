@@ -92,11 +92,16 @@ public class AuthenticationService {
                         .build()
         );
 
-        //Extract role for response
+        //Extract role for response if the role is admin than it takes the priority over the role user
         String role = user.getRoles().stream()
                 .map(Role::getName)
+                .filter(r -> r.equals("ROLE_ADMIN"))
                 .findFirst()
-                .orElse("ROLE_USER");
+                .orElseGet(() -> user.getRoles().stream()
+                        .map(Role::getName)
+                        .findFirst()
+                        .orElse("ROLE_USER")
+                );
 
         return new AuthResponse(accessToken, refreshToken,role, user.getUsername());
     }
