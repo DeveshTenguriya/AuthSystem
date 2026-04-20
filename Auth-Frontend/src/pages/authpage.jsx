@@ -40,6 +40,7 @@ export default function AuthPage() {
       }
 
       const { accessToken, refreshToken } = response.data;
+      console.log("Login response:", response.data);
 
 // ✅ save tokens via handleTokenFromUrl (matches your AuthContext)
       const result = await handleTokenFromUrl(accessToken, refreshToken);
