@@ -6,7 +6,8 @@ import "./UnauthorisedPage.css";
  * UnauthorisedPage.jsx  ← BONUS (not in original plan, but necessary)
  *
  * PURPOSE:
-
+ *This page is shown when a logged-in user tries to access a route
+   * they don't have permission for.
  *
  * CRITICAL DISTINCTION — TWO DIFFERENT ACCESS FAILURES:
  *
