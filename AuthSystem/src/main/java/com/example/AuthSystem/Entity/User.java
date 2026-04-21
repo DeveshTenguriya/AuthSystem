@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.security.Permission;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Entity
@@ -124,4 +125,32 @@ public class User implements UserDetails {
     @Override public boolean isAccountNonLocked()        { return !accountLocked; }
     @Override public boolean isCredentialsNonExpired()   { return true; }
     @Override public boolean isEnabled()                 { return true; }
+
+// ── Helpers ───────────────────────────────────────────────
+
+    public void incrementFailedAttempts() {
+        this.failedLoginAttempts++;
+    }
+
+    public void resetFailedAttempts() {
+        this.failedLoginAttempts = 0;
+        this.lockTime = null;
+    }
+
+    public void lockAccount() {
+        this.accountLocked = true;
+        this.lockTime = Instant.now();
+    }
+
+    public void unlockAccount() {
+        this.accountLocked = false;
+        this.failedLoginAttempts = 0;
+        this.lockTime = null;
+    }
+
+    public List<String> getPermissionNames() {
+        return permissions.stream()
+                .map(Permission::getName)
+                .collect(Collectors.toList());
+    }
 }
