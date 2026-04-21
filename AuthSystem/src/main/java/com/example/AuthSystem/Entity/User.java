@@ -57,5 +57,14 @@ public class User {
     @Builder.Default
     private Set<Permission> permissions = new HashSet<>();
 
+    // ── Phase 5: Account locking ──────────────────────────────
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean accountLocked = false;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private int failedLoginAttempts = 0;
+
+    private Instant lockTime;
 }
