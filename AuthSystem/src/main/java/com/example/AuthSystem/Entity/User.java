@@ -3,6 +3,7 @@ package com.example.AuthSystem.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.security.Permission;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,6 +49,13 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     //phase-4
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "permission")
+    @Builder.Default
+    private Set<Permission> permissions = new HashSet<>();
 
 
 }
