@@ -76,4 +76,21 @@ public class User {
 
     private String verificationToken;
     private Instant verificationExpiry;
+
+    // ── Timestamps ────────────────────────────────────────────
+    @Column(updatable = false)
+    private Instant createdAt;
+
+    private Instant updatedAt;
+
+    @PrePersist
+    void prePersist() {
+        createdAt = Instant.now();
+        updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    void preUpdate() {
+        updatedAt = Instant.now();
+    }
 }
