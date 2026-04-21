@@ -68,4 +68,12 @@ public class User {
     private int failedLoginAttempts = 0;
 
     private Instant lockTime;
+
+    // ── Phase 5: Email verification ───────────────────────────
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean emailVerified = false;
+
+    private String verificationToken;
+    private Instant verificationExpiry;
 }
