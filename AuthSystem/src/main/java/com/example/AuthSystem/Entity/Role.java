@@ -28,8 +28,6 @@ public class Role {
     )
 
 
-
-
     
     private Set<PermissionEntity> permissionEntity;
 }
