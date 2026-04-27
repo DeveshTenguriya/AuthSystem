@@ -19,7 +19,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ─── RESPONSE INTERCEPTOR ─────────────────────────────────────────────────────
+// ─── RESPONSE INTERCEPTOR ───────────────────────────────────────────────
 let isRefreshing = false;
 let failedQueue  = [];
 
