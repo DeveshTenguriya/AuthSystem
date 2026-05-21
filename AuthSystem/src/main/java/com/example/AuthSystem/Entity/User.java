@@ -7,7 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
-import java.security.Permission;
+import com.example.AuthSystem.Enum.Permission;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,8 +38,8 @@ public class User implements UserDetails {
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean enabled = true;
 
-    @Column(nullable = false, columnDefinition = "boolean default true")
-    private boolean accountNonLocked = true;
+//    @Column(nullable = false, columnDefinition = "boolean default true")
+//    private boolean accountNonLocked = true;
 
 
 
@@ -63,7 +63,7 @@ public class User implements UserDetails {
     private Set<Permission> permissions = new HashSet<>();
 
     // ── Phase 5: Account locking ──────────────────────────────
-    @Column(nullable = false)
+    @Column(name = "account_locked",nullable = false)
     @Builder.Default
     private boolean accountLocked = false;
 
