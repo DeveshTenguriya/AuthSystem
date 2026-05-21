@@ -1,4 +1,8 @@
 package com.example.AuthSystem.Enum;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Permission.java — Phase 4
  *
@@ -14,7 +18,8 @@ package com.example.AuthSystem.Enum;
  * These are stored in the `user_permissions` table and embedded in the JWT.
  */
 
-public enum permission {
+@Getter
+public enum Permission {
 
     // User management (admin actions)
     VIEW_USERS,
@@ -34,5 +39,9 @@ public enum permission {
 
     // System
     VIEW_AUDIT_LOG,
-    MANAGE_ROLES
+    MANAGE_ROLES;
+
+    public String getName() {
+        return this.name();
+    }
 }
