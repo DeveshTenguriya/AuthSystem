@@ -4,7 +4,6 @@ import com.example.AuthSystem.Entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -32,7 +31,7 @@ public class CustomUserDetails implements UserDetails {
             );
 
             // ✅ Add PERMISSIONS
-            role.getPermission().forEach(permission -> {
+            role.getPermissionEntity().forEach(permission -> {
                 authorities.add(
                         new SimpleGrantedAuthority(permission.getName())
                 );
