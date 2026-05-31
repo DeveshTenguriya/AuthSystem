@@ -31,6 +31,8 @@ public class JwtServices {
                 .filter(a -> a.startsWith("ROLE_"))
                 .collect(Collectors.toList());
 
+        System.out.println("Authorities = " + authorities);
+        System.out.println("Roles = " + roles);
 
         String token= Jwts.builder()
                 .setSubject(userDetails.getUsername())
