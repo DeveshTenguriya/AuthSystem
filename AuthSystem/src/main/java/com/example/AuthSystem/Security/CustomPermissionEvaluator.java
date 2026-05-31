@@ -17,10 +17,11 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
                                  Object permission) {  //"DELETE_USER" string
 
         Collection<? extends GrantedAuthority> authorities =
-                authentication.getAuthorities();
+                authentication.getAuthorities(); // get user's permissions
 
         return authorities.stream()
                 .anyMatch(a -> a.getAuthority().equals(permission));
+        // checks if any authority matches the required permission
     }
 
     @Override
