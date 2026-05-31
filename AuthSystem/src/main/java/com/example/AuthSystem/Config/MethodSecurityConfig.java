@@ -13,11 +13,14 @@ public class MethodSecurityConfig {
     @Bean
     public MethodSecurityExpressionHandler expressionHandler(
             CustomPermissionEvaluator permissionEvaluator) {
+        // Spring injects your CustomPermissionEvaluator automatically
 
         DefaultMethodSecurityExpressionHandler handler =
                 new DefaultMethodSecurityExpressionHandler();
+        // this is the default handler for @PreAuthorize expressions
 
         handler.setPermissionEvaluator(permissionEvaluator);
+        // tells Spring: "when you see hasPermission(), use MY evaluator"
 
         return handler;
     }
