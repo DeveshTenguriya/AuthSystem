@@ -1,49 +1,49 @@
-package com.example.AuthSystem.Config;
+    package com.example.AuthSystem.Config;
 
-import com.example.AuthSystem.Entity.User;
-import com.example.AuthSystem.Repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-
-
-import java.util.stream.Collectors;
-
-@Service
-@RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
-    private final UserRepository userRepository;
+    import com.example.AuthSystem.Entity.User;
+    import com.example.AuthSystem.Repository.UserRepository;
+    import lombok.RequiredArgsConstructor;
+    import org.springframework.security.core.authority.SimpleGrantedAuthority;
+    import org.springframework.security.core.userdetails.UserDetails;
+    import org.springframework.security.core.userdetails.UserDetailsService;
+    import org.springframework.security.core.userdetails.UsernameNotFoundException;
+    import org.springframework.stereotype.Service;
 
 
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
+    import java.util.stream.Collectors;
 
-        User user = userRepository.findByEmail(username)
-                                                                           .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found"));
+    @Service
+    @RequiredArgsConstructor
+    public class CustomUserDetailsService implements UserDetailsService {
+        private final UserRepository userRepository;
 
-        return new CustomUserDetails(user);
+
+        public UserDetails loadUserByUsername(String username)
+                throws UsernameNotFoundException {
+
+            User user = userRepository.findByEmail(username)
+                                                                               .orElseThrow(() ->
+                            new UsernameNotFoundException("User not found"));
+
+            return new CustomUserDetails(user);
+        }
+
+        //Why This Class Is Critical
+        //That contains:
+        //
+        //Username
+        //
+        //Password
+        //
+        //Authorities (roles)
+        //
+        //Spring then:
+        //
+        //Stores it in SecurityContext
+        //
+        //Uses it for authorization
+        //
+        //Checks roles in @PreAuthorize
+        //
+        //Checks roles in SecurityConfig
     }
-
-    //Why This Class Is Critical
-    //That contains:
-    //
-    //Username
-    //
-    //Password
-    //
-    //Authorities (roles)
-    //
-    //Spring then:
-    //
-    //Stores it in SecurityContext
-    //
-    //Uses it for authorization
-    //
-    //Checks roles in @PreAuthorize
-    //
-    //Checks roles in SecurityConfig
-}
