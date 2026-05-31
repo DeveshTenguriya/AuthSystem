@@ -111,7 +111,7 @@ public class User implements UserDetails {
 
         // Role as ROLE_XXX authority
         roles.forEach(r -> authorities.add(
-                new SimpleGrantedAuthority("ROLE_" + r.getName())
+                new SimpleGrantedAuthority(r.getName())
         ));
 
         // Individual permissions as plain authority strings
