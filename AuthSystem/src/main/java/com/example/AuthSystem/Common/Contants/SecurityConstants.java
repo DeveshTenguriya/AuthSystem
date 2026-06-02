@@ -1,0 +1,33 @@
+package com.example.AuthSystem.Common.Contants;
+
+import com.example.AuthSystem.Config.JwtAuthenticationFilter;
+import com.example.AuthSystem.Security.Filter.RateLimitFilter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+
+@Configuration
+@RequiredArgsConstructor
+@EnableWebSecurity
+public class SecurityConstants {
+
+    private final RateLimitFilter rateLimitFilter;
+    private final JwtAuthenticationFilter jwtAuthFilter;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                // Rate limit runs BEFORE JWT auth
+                .addFilterBefore(rateLimitFilter,   UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthFilter,     UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+}
