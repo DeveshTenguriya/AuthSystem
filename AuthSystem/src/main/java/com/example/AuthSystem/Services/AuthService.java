@@ -25,7 +25,7 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request) throws AccountLockedException, AuthException {
 
-        User user = userRepository.findByEmail(request.email())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AuthException("Invalid credentials"));
 
         // ── 1. Check lock status (auto-unlocks if 24 h elapsed) ──
@@ -51,7 +51,16 @@ public class AuthService {
         // ── 3. Success ────────────────────────────────────────────
         loginAttemptService.recordSuccess(user.getEmail());
         String token = jwtService.generateToken(user);
-        return new AuthResponse(token);
+        String accessToken = jwtService.generateToken(user);
+        String role = user.getRoles()
+                .stream()
+                .findFirst()
+                .map(r -> r.getName())
+                .orElse("ROLE_USER");
+        return new AuthResponse( accessToken,
+                null,
+                role,
+                user.getEmail());
     }
 
     private int getAttemptCount(String email) {
