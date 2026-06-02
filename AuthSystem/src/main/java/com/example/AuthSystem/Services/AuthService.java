@@ -23,7 +23,7 @@ public class AuthService {
     private final JwtServices jwtService;
     private final LoginAttemptService loginAttemptService;
 
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request) throws AccountLockedException, AuthException {
 
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new AuthException("Invalid credentials"));
@@ -37,7 +37,7 @@ public class AuthService {
         }
 
         // ── 2. Validate password ──────────────────────────────────
-        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             loginAttemptService.recordFailure(user.getEmail());
 
             int remaining = 5 - getAttemptCount(user.getEmail());
