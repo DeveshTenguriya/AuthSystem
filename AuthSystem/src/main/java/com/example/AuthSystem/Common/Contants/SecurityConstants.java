@@ -21,7 +21,7 @@ public class SecurityConstants {
     private final RateLimitFilter rateLimitFilter;
     private final JwtAuthenticationFilter jwtAuthFilter;
 
-    @Bean
+
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
