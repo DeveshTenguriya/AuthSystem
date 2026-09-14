@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.AuthSystem.Enum.Permission;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,7 +72,7 @@ public class User implements UserDetails {
     @Builder.Default
     private int failedLoginAttempts = 0;
 
-    private Instant lockTime;
+    private LocalDateTime lockTime;
 
     // ── Phase 5: Email verification ───────────────────────────
     @Column(nullable = false)
@@ -141,7 +142,7 @@ public class User implements UserDetails {
 
     public void lockAccount() {
         this.accountLocked = true;
-        this.lockTime = Instant.now();
+        this.lockTime = LocalDateTime.now();
     }
 
     public void unlockAccount() {
